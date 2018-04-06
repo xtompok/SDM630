@@ -46,11 +46,12 @@ logging.info("Setup...")
 num_meters = config.getint("sdm630","num_meters")
 meters = []
 for i in range(num_meters):
-	meters.append(SDM630(port,config.getint("sdm630","id"+str(i))))
+	meters.append(SDM630(port,config.getint("sdm630","id"+str(i+1))))
 
 logging.info("Entering endless loop")
 while (True):
 	for (num,sdm630) in enumerate(meters):
+		num += 1
 		sdm630.get_data()
 		publish(str(num)+"/voltage/l1",sdm630.voltage[0])
 		publish(str(num)+"/voltage/l2",sdm630.voltage[1])
