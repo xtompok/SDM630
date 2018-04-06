@@ -14,9 +14,7 @@ class SDM630(object):
 		# TODO rest
 
 		self.aid = aid
-		self.master = modbus_rtu.RtuMaster(
-			serial.Serial(port=port, baudrate=9600, bytesize=8, parity='N', stopbits=1, xonxoff=0, dsrdtr=True)
-		)
+		self.master = modbus_rtu.RtuMaster(port)
 		self.master.set_timeout(1.0)
 #		self.master.set_verbose(True)
 
