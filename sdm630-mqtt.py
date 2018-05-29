@@ -11,6 +11,7 @@ import logging
 import os
 import traceback
 import configparser as ConfigParser
+import time
 
 CONFIG_FILE = 'sdm630-mqtt.conf'
 
@@ -46,35 +47,37 @@ logging.info("Setup...")
 num_meters = config.getint("sdm630","num_meters")
 meters = []
 for i in range(num_meters):
-	meters.append(SDM630(port,config.getint("sdm630","id"+str(i+1))))
+	meter = SDM630(port,
+		config.getint("sdm630","id"+str(i+1)),
+		config.get("sdm630","regfile"))
+	meters.append(meter)
 
 logging.info("Entering endless loop")
 while (True):
 	for (num,sdm630) in enumerate(meters):
 		num += 1
-		sdm630.get_data()
-		publish(str(num)+"/voltage/l1",sdm630.voltage[0])
-		publish(str(num)+"/voltage/l2",sdm630.voltage[1])
-		publish(str(num)+"/voltage/l3",sdm630.voltage[2])
-		publish(str(num)+"/current/l1",sdm630.current[0])
-		publish(str(num)+"/current/l2",sdm630.current[1])
-		publish(str(num)+"/current/l3",sdm630.current[2])
-		publish(str(num)+"/power/l1",sdm630.power[0])
-		publish(str(num)+"/power/l2",sdm630.power[1])
-		publish(str(num)+"/power/l3",sdm630.power[2])
+		publish(str(num)+"/voltage/l1",sdm630.v1)
+		publish(str(num)+"/voltage/l2",sdm630.v2)
+		publish(str(num)+"/voltage/l3",sdm630.v3)
+		publish(str(num)+"/current/l1",sdm630.a1)
+		publish(str(num)+"/current/l2",sdm630.a2)
+		publish(str(num)+"/current/l3",sdm630.a3)
+		publish(str(num)+"/power/l1",sdm630.p1)
+		publish(str(num)+"/power/l2",sdm630.p2)
+		publish(str(num)+"/power/l3",sdm630.p3)
 		publish(str(num)+"/power/total",sdm630.total_power)
-		publish(str(num)+"/voltamps/l1",sdm630.va[0])
-		publish(str(num)+"/voltamps/l2",sdm630.va[1])
-		publish(str(num)+"/voltamps/l3",sdm630.va[2])
+		publish(str(num)+"/voltamps/l1",sdm630.va1)
+		publish(str(num)+"/voltamps/l2",sdm630.va2)
+		publish(str(num)+"/voltamps/l3",sdm630.va3)
 		publish(str(num)+"/voltage/avg",sdm630.avg_voltage)
 		publish(str(num)+"/current/avg",sdm630.avg_current)
 		publish(str(num)+"/current/sum",sdm630.sum_current)
 		publish(str(num)+"/frequency",sdm630.frequency)
-		publish(str(num)+"/voltage/l1l2",sdm630.line2line_v[0])
-		publish(str(num)+"/voltage/l2l3",sdm630.line2line_v[1])
-		publish(str(num)+"/voltage/l3l1",sdm630.line2line_v[2])
+		publish(str(num)+"/voltage/l1l2",sdm630.v1v2)
+		publish(str(num)+"/voltage/l2l3",sdm630.v2v3)
+		publish(str(num)+"/voltage/l3l1",sdm630.v3v1)
 		publish(str(num)+"/curent/neutral",sdm630.neutral_current)
 		publish(str(num)+"/wh/import",sdm630.import_wh)
 		publish(str(num)+"/wh/export",sdm630.export_wh)
-		publish(str(num)+"/time",sdm630.time)
-	time.sleep(1)
+		publish(str(num)+"/time",time.time())
+	time.sleep(0.5)
