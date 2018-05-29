@@ -13,7 +13,7 @@ class SDM630(object):
 		with open(regfile) as regs:
 			reader = csv.reader(regs,delimiter=';')
 			for line in reader:
-				self.registers[line[1]] = line[0]
+				self.registers[line[1]] = int(line[0],base=16)
 		self.aid = aid
 		self.master = modbus_rtu.RtuMaster(port)
 		self.master.set_timeout(1.0)
@@ -22,7 +22,7 @@ class SDM630(object):
 		
 	def __getattr__(self,attr):
 		if attr in self.registers:
-			return read_register(self.registers[attr])
+			return self.read_register(self.registers[attr])
 
 
 	def read_register(self,addr):
