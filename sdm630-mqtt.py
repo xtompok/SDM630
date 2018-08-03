@@ -15,7 +15,7 @@ import time
 
 CONFIG_FILE = 'sdm630-mqtt.conf'
 
-logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger().setLevel(logging.WARNING)
 
 def publish(topic,value):
 	info = mqclient.publish("/".join((config.get("mqtt","topic_prefix"),topic)),value,qos=1)
@@ -29,7 +29,6 @@ config = ConfigParser.ConfigParser()
 confread = config.read(CONFIG_FILE)
 logging.info("Read config {}".format(confread))
 logging.info("Opening port {}".format(config.get("sdm630","port")))
-port = serial.Serial(port=config.get("sdm630","port"), baudrate=9600, bytesize=8, parity='N', stopbits=1, xonxoff=0, dsrdtr=True)
 
 logging.info("Connecting to MQTT server...")
 mqclient = mqtt.Client()
@@ -47,7 +46,8 @@ logging.info("Setup...")
 num_meters = config.getint("sdm630","num_meters")
 meters = []
 for i in range(num_meters):
-	meter = SDM630(port,
+	meter = SDM630(config.get("sdm630","host"),
+		config.get("sdm630","port"),
 		config.getint("sdm630","id"+str(i+1)),
 		config.get("sdm630","regfile"))
 	meters.append(meter)
@@ -56,6 +56,9 @@ logging.info("Entering endless loop")
 while (True):
 	for (num,sdm630) in enumerate(meters):
 		num += 1
+		publish(str(num)+"/voltage/all",str(sdm630.voltx3))
+		publish(str(num)+"/current/all",str(sdm630.ampx3))
+		publish(str(num)+"/power/all",str(sdm630.powx3))
 		publish(str(num)+"/voltage/l1",sdm630.v1)
 		publish(str(num)+"/voltage/l2",sdm630.v2)
 		publish(str(num)+"/voltage/l3",sdm630.v3)
