@@ -50,6 +50,7 @@ for i in range(num_meters):
 		config.get("sdm630","port"),
 		config.getint("sdm630","id"+str(i+1)),
 		config.get("sdm630","regfile"))
+	meter.connect()
 	meters.append(meter)
 
 logging.info("Entering endless loop")

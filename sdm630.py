@@ -15,7 +15,11 @@ class SDM630(object):
 			for line in reader:
 				self.registers[line[1]] = int(line[0],base=16)
 		self.aid = aid
-		self.master = ModbusTcpClient(host=host,port=port)
+		self.host = host
+		self.port = port
+
+	def connect(self):
+		self.master = ModbusTcpClient(host=self.host,port=self.port)
 #		self.master.set_timeout(1.0)
 #		self.master.set_verbose(True)
 
