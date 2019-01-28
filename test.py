@@ -11,6 +11,7 @@ import serial
 import modbus_tk
 import modbus_tk.defines as cst
 from modbus_tk import modbus_rtu
+import configparser
 
 def read_float(arrRegs):
     reg1 = arrRegs[1]
@@ -32,17 +33,28 @@ def bcdDigits(chars):
                 return
             yield val
 
-PORT = '/dev/usbserial/sdm630'
 SLAVE = 1
 
 def main():
     """main"""
     logger = modbus_tk.utils.create_logger("console")
 
+    config = configparser.ConfigParser()
+    config.read('sdm630.cfg')
+    PORT=config['SDM630']['PORT']
+    BAUDRATE=config['SDM630']['BAUDRATE']
+    BYTESIZE=int(config['SDM630']['BYTESIZE'])
+    PARITY=config['SDM630']['PARITY']
+    STOPBITS=bool(config['SDM630']['STOPBITS'])
+    XONXOFF=config['SDM630']['XONXOFF']
+    DSRDTR=config['SDM630']['DSRDTR']
+    STOPBITS=config['SDM630']['STOPBITS']
+
+
     try:
         #Connect to the slave
         master = modbus_rtu.RtuMaster(
-            serial.Serial(port=PORT, baudrate=9600, bytesize=8, parity='N', stopbits=1, xonxoff=0, dsrdtr=True)
+            serial.Serial(port=PORT, baudrate=BAUDRATE, bytesize=BYTESIZE, parity=PARITY, stopbits=1, xonxoff=XONXOFF, dsrdtr=DSRDTR)
         )
         master.set_timeout(1.0)
 #        master.set_verbose(True)

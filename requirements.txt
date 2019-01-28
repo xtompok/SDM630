@@ -1,0 +1,3 @@
+serial
+modbus_tk
+configparser
