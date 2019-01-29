@@ -10,24 +10,9 @@ import time
 import csv
 
 class SDM630(object):
-	(TCP,RS485) = (0,1)
-	# connecting using tcp
-	def __init__(self,host,port,aid,regfile):
-		self.connection_type = self.TCP
+	def __init__(self, regfile):
 		self.__fill_registers__(regfile)
-		self.aid = aid
-		self.host = host
-		self.port = port
-
-	# connecting using serial port
-	def __init__(self,port, baudrate, aid, regfile):
-		self.connection_type = self.RS485
-		self.__fill_registers__(regfile)
-		self.port = port
-		self.baudrate = baudrate
-		self.aid = aid
-
-
+	
 	def __fill_registers__(self, regfile):
 		self.registers = {}
 		with open(regfile) as regs:
@@ -35,15 +20,6 @@ class SDM630(object):
 			for line in reader:
 				self.registers[line[1]] = int(line[0],base=16)
 	
-
-	def connect(self):
-		if (self.connection_type == self.TCP):
-			self.master = ModbusTcpClient(host=self.host,port=self.port)
-		elif (self.connection_type == self.RS485):
-			self.master = ModbusSerialClient("rtu", port=self.port, baudrate=self.baudrate, timeout=1)
-			#self.master.set_timeout(1.0)
-			#self.master.set_verbose(True)
-
 		
 	def __getattr__(self,attr):
 		if attr == "voltx3":
@@ -66,4 +42,28 @@ class SDM630(object):
 		if count == 1:
 			return decoder.decode_32bit_float()
 		return tuple(decoder.decode_32bit_float() for _ in range(count))
+
+# connecting using tcp
+class SDM630TCP(SDM630):
+	def __init__(self,host,port,aid,regfile):
+		SDM630.__init__(self,regfile)
+
+		self.aid = aid
+		self.host = host
+		self.port = port
+		
+		self.master = ModbusTcpClient(host=self.host,port=self.port)
+
+
+# connecting using serial port
+class SDM630RS485(SDM630):
+	def __init__(self, port, baudrate, aid, regfile):
+		SDM630.__init__(self,regfile)
+
+		self.port = port
+		self.baudrate = baudrate
+		self.aid = aid
+
+		self.master = ModbusSerialClient("rtu", port=self.port, baudrate=self.baudrate, timeout=1)
+
 
