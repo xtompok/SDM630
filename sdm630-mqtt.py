@@ -94,4 +94,4 @@ while (True):
 		publish(str(num)+"/wh/import",sdm630.import_wh)
 		publish(str(num)+"/wh/export",sdm630.export_wh)
 		publish(str(num)+"/time",time.time())
-	time.sleep(5)
+	time.sleep(0.5)
