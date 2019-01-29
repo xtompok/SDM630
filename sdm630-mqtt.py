@@ -60,11 +60,6 @@ for i in range(num_meters):
 		logging.info("Opening port {}".format(config.get("rs485","port")))
 		meter = SDM630(config.get("rs485","PORT"),
 			config.getint("rs485","BAUDRATE"),
-			config.getint("rs485","BYTESIZE"),
-			config.get("rs485","PARITY"),
-			config.getint("rs485","STOPBITS"),
-			config.getint("rs485","XONXOFF"),
-			config.get("rs485","DSRDTR"),
 			config.getint("sdm630","id"+str(i+1)),
 			regfile)
 

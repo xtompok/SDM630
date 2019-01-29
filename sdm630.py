@@ -24,16 +24,11 @@ class SDM630(object):
 		self.port = port
 
 	# connecting using serial port
-	def __init__(self,port, baudrate, bytesize, parity, stopbits, xonxoff, dsrdtr, aid, regfile):
+	def __init__(self,port, baudrate, aid, regfile):
 		self.connection_type = self.RS485
 		self.__fill_registers__(regfile)
 		self.port = port
 		self.baudrate = baudrate
-		self.bytesize = bytesize
-		self.parity = parity
-		self.stopbits = stopbits
-		self.xonxoff = xonxoff
-		self.dsrdtr = dsrdtr
 		self.aid = aid
 
 
