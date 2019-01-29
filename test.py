@@ -40,17 +40,15 @@ def main():
     logger = modbus_tk.utils.create_logger("console")
 
     config = configparser.ConfigParser()
-    config.read('sdm630.cfg')
-    PORT=config.get('SDM630','PORT')
-    BAUDRATE=config.get('SDM630','BAUDRATE')
-    BYTESIZE=int(config.get('SDM630','BYTESIZE'))
-    PARITY=config.get('SDM630','PARITY')
-    STOPBITS=config.get('SDM630','STOPBITS')
-    XONXOFF=config.get('SDM630','XONXOFF')
-    DSRDTR=config.get('SDM630','DSRDTR')
-    STOPBITS=config['SDM630']['STOPBITS']
-
-    print(STOPBITS)
+    config.read('sdm630-mqtt.conf')
+    rs485 = config['rs485']
+    PORT=rs485.get('PORT')
+    BAUDRATE=rs485.getint('BAUDRATE', 9600)
+    BYTESIZE=rs485.getint('BYTESIZE', 8)
+    PARITY=rs485.get('PARITY', 'N')
+    STOPBITS=rs485.getint('STOPBITS', 1)
+    XONXOFF=rs485.getint('XONXOFF', 0)
+    DSRDTR=rs485.getboolean('DSRDTR', True)
 
     try:
         #Connect to the slave

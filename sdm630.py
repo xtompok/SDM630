@@ -1,6 +1,7 @@
 # -*- coding: utf_8 -*-
 
 from pymodbus.client.sync import ModbusTcpClient
+from pymodbus.client.sync import ModbusSerialClient
 from pymodbus.payload import BinaryPayloadDecoder
 from pymodbus.constants import Endian
 
@@ -48,8 +49,8 @@ class SDM630(object):
 		if (self.connection_type == self.TCP):
 			self.master = ModbusTcpClient(host=self.host,port=self.port)
 		elif (self.connection_type == self.RS485):
-			self.master = modbus_rtu.RtuMaster(serial.Serial(self.port, self.baudrate, self.bytesize, self.parity, self.stopbits, self.xonxoff, self.dsrdtr))
-			self.master.set_timeout(1.0)
+			self.master = ModbusSerialClient("rtu", port=self.port, baudrate=self.baudrate, timeout=1)
+			#self.master.set_timeout(1.0)
 			#self.master.set_verbose(True)
 
 		
