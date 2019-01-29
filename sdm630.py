@@ -5,10 +5,6 @@ from pymodbus.client.sync import ModbusSerialClient
 from pymodbus.payload import BinaryPayloadDecoder
 from pymodbus.constants import Endian
 
-import modbus_tk
-import modbus_tk.defines as cst
-from modbus_tk import modbus_rtu
-
 import serial
 import time
 import csv
