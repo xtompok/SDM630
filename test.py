@@ -41,15 +41,16 @@ def main():
 
     config = configparser.ConfigParser()
     config.read('sdm630.cfg')
-    PORT=config['SDM630']['PORT']
-    BAUDRATE=config['SDM630']['BAUDRATE']
-    BYTESIZE=int(config['SDM630']['BYTESIZE'])
-    PARITY=config['SDM630']['PARITY']
-    STOPBITS=bool(config['SDM630']['STOPBITS'])
-    XONXOFF=config['SDM630']['XONXOFF']
-    DSRDTR=config['SDM630']['DSRDTR']
+    PORT=config.get('SDM630','PORT')
+    BAUDRATE=config.get('SDM630','BAUDRATE')
+    BYTESIZE=int(config.get('SDM630','BYTESIZE'))
+    PARITY=config.get('SDM630','PARITY')
+    STOPBITS=config.get('SDM630','STOPBITS')
+    XONXOFF=config.get('SDM630','XONXOFF')
+    DSRDTR=config.get('SDM630','DSRDTR')
     STOPBITS=config['SDM630']['STOPBITS']
 
+    print(STOPBITS)
 
     try:
         #Connect to the slave

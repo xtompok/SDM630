@@ -28,7 +28,7 @@ logging.info("Reading config...")
 config = ConfigParser.ConfigParser()
 confread = config.read(CONFIG_FILE)
 logging.info("Read config {}".format(confread))
-logging.info("Opening port {}".format(config.get("sdm630","port")))
+
 
 logging.info("Connecting to MQTT server...")
 mqclient = mqtt.Client()
@@ -45,11 +45,29 @@ except:
 logging.info("Setup...")
 num_meters = config.getint("sdm630","num_meters")
 meters = []
+connection_type = config.get("sdm630", "connection_type")
+regfile = config.get("sdm630", "regfile")
+
 for i in range(num_meters):
-	meter = SDM630(config.get("sdm630","host"),
-		config.get("sdm630","port"),
-		config.getint("sdm630","id"+str(i+1)),
-		config.get("sdm630","regfile"))
+	
+	if connection_type == 'TCP':
+		logging.info("Opening port {}".format(config.get("tcp","port")))
+		meter = SDM630(config.get("tcp","host"),
+			config.get("tcp","port"),
+			config.getint("sdm630","id"+str(i+1)),
+			regfile)
+	elif connection_type == 'RS485':
+		logging.info("Opening port {}".format(config.get("rs485","port")))
+		meter = SDM630(config.get("rs485","PORT"),
+			config.getint("rs485","BAUDRATE"),
+			config.getint("rs485","BYTESIZE"),
+			config.get("rs485","PARITY"),
+			config.getint("rs485","STOPBITS"),
+			config.getint("rs485","XONXOFF"),
+			config.get("rs485","DSRDTR"),
+			config.getint("sdm630","id"+str(i+1)),
+			regfile)
+
 	meter.connect()
 	meters.append(meter)
 
