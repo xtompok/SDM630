@@ -8,6 +8,7 @@
 
 from struct import *
 import serial
+import sys
 import modbus_tk
 import modbus_tk.defines as cst
 from modbus_tk import modbus_rtu
@@ -39,8 +40,12 @@ def main():
     """main"""
     logger = modbus_tk.utils.create_logger("console")
 
+    CONFIG_FILE = 'sdm630-mqtt.conf'
+    if ((len(sys.argv) == 3) and sys.argv[1] == '-c'):
+        CONFIG_FILE = sys.argv[2]
+
     config = configparser.ConfigParser()
-    config.read('sdm630-mqtt.conf')
+    config.read(CONFIG_FILE)
     rs485 = config['rs485']
     PORT=rs485.get('PORT')
     BAUDRATE=rs485.getint('BAUDRATE', 9600)
@@ -53,7 +58,7 @@ def main():
     try:
         #Connect to the slave
         master = modbus_rtu.RtuMaster(
-            serial.Serial(port=PORT, baudrate=BAUDRATE, bytesize=BYTESIZE, parity=PARITY, stopbits=1, xonxoff=XONXOFF, dsrdtr=DSRDTR)
+            serial.Serial(port=PORT, baudrate=BAUDRATE, bytesize=BYTESIZE, parity=PARITY, stopbits=STOPBITS, xonxoff=XONXOFF, dsrdtr=DSRDTR)
         )
         master.set_timeout(1.0)
 #        master.set_verbose(True)
