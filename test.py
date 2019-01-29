@@ -8,9 +8,11 @@
 
 from struct import *
 import serial
+import sys
 import modbus_tk
 import modbus_tk.defines as cst
 from modbus_tk import modbus_rtu
+import configparser
 
 def read_float(arrRegs):
     reg1 = arrRegs[1]
@@ -32,17 +34,31 @@ def bcdDigits(chars):
                 return
             yield val
 
-PORT = '/dev/usbserial/sdm630'
 SLAVE = 1
 
 def main():
     """main"""
     logger = modbus_tk.utils.create_logger("console")
 
+    CONFIG_FILE = 'sdm630-mqtt.conf'
+    if ((len(sys.argv) == 3) and sys.argv[1] == '-c'):
+        CONFIG_FILE = sys.argv[2]
+
+    config = configparser.ConfigParser()
+    config.read(CONFIG_FILE)
+    rs485 = config['rs485']
+    PORT=rs485.get('PORT')
+    BAUDRATE=rs485.getint('BAUDRATE', 9600)
+    BYTESIZE=rs485.getint('BYTESIZE', 8)
+    PARITY=rs485.get('PARITY', 'N')
+    STOPBITS=rs485.getint('STOPBITS', 1)
+    XONXOFF=rs485.getint('XONXOFF', 0)
+    DSRDTR=rs485.getboolean('DSRDTR', True)
+
     try:
         #Connect to the slave
         master = modbus_rtu.RtuMaster(
-            serial.Serial(port=PORT, baudrate=9600, bytesize=8, parity='N', stopbits=1, xonxoff=0, dsrdtr=True)
+            serial.Serial(port=PORT, baudrate=BAUDRATE, bytesize=BYTESIZE, parity=PARITY, stopbits=STOPBITS, xonxoff=XONXOFF, dsrdtr=DSRDTR)
         )
         master.set_timeout(1.0)
 #        master.set_verbose(True)
